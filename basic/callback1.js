@@ -11,8 +11,10 @@ let doWork = function (job, timer, cb) {
 };
 
 // 刷牙 (3000) -> 吃早餐 (5000) -> 寫功課 (3000)
+//setTimeout ->外包  他也不會告訴會做多久
 
 doWork('刷牙', 3000, function (result) {
+    //這裡刷完牙了
   console.log(result);
 
   doWork('吃早餐', 5000, function (result) {
