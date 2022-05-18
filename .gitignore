@@ -1,0 +1,6 @@
+# .gitignore 忽略清單
+
+# 官方 .gitignore
+# https://github.com/github/gitignore
+
+node_modules
