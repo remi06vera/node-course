@@ -42,8 +42,12 @@ function getPromise(filepath){
 
 //步驟2 設立async function
 async function main(){
-    let result = await getPromise('stock.txt');
-    console.log(result);
+    try{
+        let result = await getPromise('stock.txt');
+        console.log(result);
+    }catch(e){
+        console.log('錯誤',e);
+    }
 }
 
 main();

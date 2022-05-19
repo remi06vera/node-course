@@ -9,10 +9,8 @@ const fs = require("fs/promises");
 
 
 axios.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY',{
-    //config 通常以物件的方式傳入
     params:{
         //設定 query srting
-        //devtool->network->payload
         response: 'json',
         date: '20220301',
         stockNo: '2330',
@@ -40,7 +38,12 @@ axios.get('https://www.twse.com.tw/exchangeReport/STOCK_DAY',{
 
 // async  await 版本
 async function main(){
-    let result = await fs.readFile("stock.txt", "UTF-8");
-    console.log(result);
+    try{
+
+      let result = await fs.readFile("stock.txt", "UTF-8");
+      console.log(result);
+    }catch(e){
+      console.log('錯誤',e);
+    }
 }
 main();
