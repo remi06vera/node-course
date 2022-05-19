@@ -4,7 +4,6 @@
 2. crawler2-callback.js      ----> callback版本
 3. crawler3-promise.js       ----> promise版本
 4. crawler4-await.js         ----> await版本
-5. crawler5-await-based.js   ----> 用promise-based APIs 寫await版本
 
 
 # 練習心得
