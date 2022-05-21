@@ -18,7 +18,7 @@ require('dotenv').config();
     database: process.env.DB_NAME,
   });
   let [data, fields] = await connection.execute('SELECT * FROM stocks');
-  console.log(data);
+  // console.log(data);
 
   // results [
   //     [],
@@ -26,6 +26,10 @@ require('dotenv').config();
   // ]
   //let data = results[0];
   //let fields = results[1];
+
+  let mapResult=data.map((stock, index)=>{
+    console.log(stock);
+  });
 
   connection.end();
 })();
