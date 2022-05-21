@@ -5,7 +5,7 @@
 // 引用進來
 const mysql = require('mysql2/promise');
 
-//第三方套件 dotenv
+//第三方套件 dotenv-->用來隱藏保密資料
 // 幫我們去把 .env 裡的變數讀進來
 require('dotenv').config();
 (async () => {
