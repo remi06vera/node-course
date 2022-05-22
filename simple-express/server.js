@@ -13,7 +13,7 @@ app.get('/about', (request, response, next) => {
     response.send("About me");
 })
 
-//步驟3：告訴伺服器聽取 3000 這個 Port
+//步驟3：告訴伺服器聽取 3001 這個 Port
 app.listen(3001, () => {
     console.log('Server running at port 3001');
 })
