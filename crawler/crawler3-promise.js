@@ -1,55 +1,31 @@
-//第三個版本:
-//TODO: 讀取股票代碼->stock.txt--->利用readfile promise版本
+//第三個版本:讀取股票代碼->stock.txt--->利用readfile promise版本
 
-//引用
-const axios = require('axios').default;
+//TODO:引用第三方模組 axios
+const axios = require('axios');
 
-//NodeJS 內建的 API-Read File
-const fs = require('fs');
+//TODO: 內建模組Read File 不用安裝 -->使用promise版本
+const fs = require('fs/promises');
 
-//步驟1 promise 起手-> new Promise((resolve, reject)=>{})
-//建立function  將路徑設成參數
-function getPromise(filepath){
-    return new Promise((resolve, reject) => {
-        fs.readFile(filepath, 'UTF-8', (err, stockNo) => {
-            if (err) {
-                //錯誤的
-                reject(err);
-            } else {
-                //正確的
-                resolve('有讀取到檔案',stockNo);
-                axios
-                    .get('https://www.twse.com.tw/exchangeReport/STOCK_DAY', {
-                        //config 通常以物件的方式傳入
-                        params: {
-                            //設定 query srting
-                            //devtool->network->payload 
-                            response: 'json',
-                            date: '20220301',
-                            stockNo: stockNo,
-                        }
-                    })
-                    .then(function (response) {
-
-                        console.log(response.data);
-                    })
-                    .catch(function (error) {
-
-                        console.log(error);
-                    })
-            }
-        });
+//TODO: 因用promise版本 直接.then 
+fs.readFile('stock.txt', 'UTF-8').then((stockNo)=>{
+    console.log(stockNo);
+    //TODO: 利用axios抓取資料 axios是基於promise-based->故也可改 promise
+    return axios
+        .get('https://www.twse.com.tw/exchangeReport/STOCK_DAY', {
+        params: {
+            // 設定 query string
+            response: 'json',
+            date: '20220301',
+            stockNo: stockNo,
+        },
     })
-}
-
-//步驟2 call函式
-getPromise('stock.txt')
-.then((result)=>{
-    console.log(result);
+   
 })
-.catch((error)=>{
-console.log(error);
+.then((response) => {
+    // response 物件
+    console.log(response.data);
 })
-
-
+.catch((e) => {
+    console.error(e);
+});
 

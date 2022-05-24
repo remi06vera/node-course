@@ -1,54 +1,32 @@
 //第四個版本:
 //TODO: 讀取股票代碼->stock.txt--->利用readfile await版本
 
-//引用
-const axios = require('axios').default;
+//TODO:引用第三方模組 axios
+const axios = require('axios');
 
-//NodeJS 內建的 API-Read File
-const fs = require('fs');
+//TODO: 內建模組Read File 不用安裝 -->使用promise版本
+const fs = require('fs/promises');
 
-//步驟1 基於promise -->不動
-function getPromise(filepath){
-    return new Promise((resolve, reject) => {
-        fs.readFile(filepath, 'UTF-8', (err, stockNo) => {
-            if (err) {
-                //錯誤的
-                reject(err);
-            } else {
-                //正確的
-                resolve('有讀取到檔案',stockNo);
-                axios
-                    .get('https://www.twse.com.tw/exchangeReport/STOCK_DAY', {
-                        params: {
-                            //設定 query srting
-                            //devtool->network->payload 
-                            response: 'json',
-                            date: '20220301',
-                            stockNo: stockNo,
-                        }
-                    })
-                    .then(function (response) {
-
-                        console.log(response.data);
-                    })
-                    .catch(function (error) {
-
-                        console.log(error);
-                    })
-            }
-        });
-    })
-}
-
-//步驟2 設立async function
-async function main(){
+//TODO: 建立async function 可以.then 就可以await
+(async ()=>{
     try{
-        let result = await getPromise('stock.txt');
-        console.log(result);
+        //成功
+        let stockNo= await fs.readFile('stock.txt', 'UTF-8');
+        let respond = await axios
+        .get('https://www.twse.com.tw/exchangeReport/STOCK_DAY', {
+    
+            params: {
+                // 設定 query string
+                response: 'json',
+                date: '20220301',
+                stockNo: stockNo,
+            },
+        })
+        console.log(respond.data);
     }catch(e){
-        console.log('錯誤',e);
+        //失敗
+        console.log(e);
     }
-}
 
-main();
+})();
 
