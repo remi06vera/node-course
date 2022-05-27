@@ -3,6 +3,7 @@
 # 官方 .gitignore
 # https://github.com/github/gitignore
 
+.vscode
 # Logs
 logs
 *.log
