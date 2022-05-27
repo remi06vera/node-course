@@ -4,6 +4,8 @@
 // npm i mysql2
 // 引用進來
 const mysql = require('mysql2/promise');
+// 引用axios
+const axios = require('axios');
 
 //第三方套件 dotenv-->用來隱藏保密資料
 // 幫我們去把 .env 裡的變數讀進來
@@ -27,9 +29,24 @@ require('dotenv').config();
   //let data = results[0];
   //let fields = results[1];
 
-  let mapResult=data.map((stock, index)=>{
-    console.log(stock);
+  let mapResult=data.map(async(stock, index)=>{
+    //console.log(stock.id);
+    let respond = await axios
+        .get('https://www.twse.com.tw/exchangeReport/STOCK_DAY', {
+    
+            params: {
+                // 設定 query string
+                response: 'json',
+                date: '20220301',
+                stockNo: stock.id,
+            },
+        })
+        return respond.data  //Promise { <pending> }, Promise { <pending> }, Promise { <pending> }
   });
+  //promise.all放入陣列
+  let priceResult =await Promise.all(mapResult)
+  console.log(priceResult);  
+
 
   connection.end();
 })();
