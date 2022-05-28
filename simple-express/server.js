@@ -16,7 +16,7 @@ let pool = mysql
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    //為了pool 新增參數
+    //為了pool 新增參數 設定上限10條連線
     connectionLimit: 10,
   })
   .promise();
@@ -24,7 +24,24 @@ let pool = mysql
 //HTTP reguest(client--->請求--->server)
 //method:get,post,put,delete..
 
-// app.set('view', path.join(__dirname, 'views'));
+//nodejs內建套件(不需 npm i) 用來處理路徑
+const path = require('path');
+
+// //express SSR 的做法
+// //設定 express pug視圖檔案放在哪裡
+// app.set('views', path.join(__dirname, 'views'));
+// //設定 express要用哪一種樣版引擎 (template engine)
+// //要用的視圖工具叫pug
+// app.set('view engine', 'pug');
+
+// 使用 express 內建的中間件 static- - >處理靜態資料
+// 方法1: 不要指定網址
+//app.use(express.static(path.join(__dirname, 'assets')));
+// http://localhost:3001/images/test1.jpg
+// 方法2: 指定網址 aaa 用於分類用
+//app.use('/aaa', express.static(path.join(__dirname, 'public')));
+// http://localhost:3001/aaa/images/callback-hell.png
+
 
 //一般中間件
 app.use((request, respond, next) => {
@@ -43,11 +60,21 @@ app.get('/about', (request, response, next) => {
   response.send('About me');
 });
 
+//錯誤
+app.get('/error', (request, response, next) => {
+  // 發生錯誤，丟一個錯誤出來
+  // throw new Error('測試測試');
+  // 或是 next 裡有任何參數
+  next('我是正確的');
+  // --> 都會跳去錯誤處理中間件
+});
+
+
 // RESTful API
 // 取得 stocks 的列表
-app.get('/stocks', async (req, res, next) => {
+app.get('/stocks', async (request, response, next) => {
   let [data, fields] = await pool.execute('SELECT * FROM stocks');
-  res.json(data);
+  response.json(data);
 });
 
 //stocks 個別
@@ -74,7 +101,7 @@ app.use((request, response, next) => {
   response.status(404).send('Not Found');
 });
 
-//5xx
+//5xx  伺服器端錯誤
 //錯誤處理中間件: 通常也會放在所有中間件後面
 //有點接近 try-catch 的catch
 app.use((error, request, response, next) => {
