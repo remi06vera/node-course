@@ -3,7 +3,15 @@
 # 官方 .gitignore
 # https://github.com/github/gitignore
 
+# 基礎設定
 .vscode
+.eslintignore
+.eslintrc
+.prettierignore
+.prettierrc
+stock_mfee25.sql
+stock.sql
+
 # Logs
 logs
 *.log
