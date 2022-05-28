@@ -2,6 +2,10 @@
 const express = require('express');
 //TODO:步驟2：利用Express 建立一個 express applications
 const app = express();
+// 使用第三方開發的中間件 cors
+const cors = require('cors');
+app.use(cors());
+
 const mysql = require('mysql2');
 require('dotenv').config();
 
@@ -39,7 +43,14 @@ app.get('/about', (request, response, next) => {
   response.send('About me');
 });
 
-//stocks
+// RESTful API
+// 取得 stocks 的列表
+app.get('/stocks', async (req, res, next) => {
+  let [data, fields] = await pool.execute('SELECT * FROM stocks');
+  res.json(data);
+});
+
+//stocks 個別
 app.get('/stocks/:stockId', async (request, response, next) => {
   let [data, fields] = await pool.execute(
     'SELECT * FROM stocks WHERE id = ' + request.params.stockId
