@@ -42,7 +42,6 @@ const path = require('path');
 //app.use('/aaa', express.static(path.join(__dirname, 'public')));
 // http://localhost:3001/aaa/images/callback-hell.png
 
-
 //一般中間件
 app.use((request, respond, next) => {
   console.log('中間件');
@@ -69,7 +68,6 @@ app.get('/error', (request, response, next) => {
   // --> 都會跳去錯誤處理中間件
 });
 
-
 // RESTful API
 // 取得 stocks 的列表
 app.get('/stocks', async (request, response, next) => {
@@ -80,10 +78,32 @@ app.get('/stocks', async (request, response, next) => {
 //stocks 個別
 app.get('/stocks/:stockId', async (request, response, next) => {
   let [data, fields] = await pool.execute(
-    'SELECT * FROM stocks WHERE id = ' + request.params.stockId
+    'SELECT * FROM stock_prices WHERE stock_id = ?',
+    [request.params.stockId]
   );
 
-  console.log('query stock by id:', data);
+  // console.log('query stock by id:', data);
+  //TODO:取得目前在第幾頁 req.query.page，而且利用 || 這個特性來做預設值
+  let page = request.query.page || 1;
+  console.log('拿到的頁數', page);
+
+  //TODO:取得目前的總筆數
+  let [allResult] = await pool.execute(
+    'SELECT * FROM stock_prices WHERE stock_id = ?',
+    [request.params.stockId]
+  );
+  const total = allResult.length;
+  console.log('總數量', total);
+
+  //TODO:計算總共有幾頁
+  //使用Math.Ceil
+  const perPage = 5; //每頁5筆
+  const lastPage = Math.ceil(total / perPage);
+  console.log('總頁數', lastPage);
+
+  //TODO:計算 offset 是多少（計算要跳過幾筆）
+  let offset = (page - 1) * perPage;
+  console.log('需跳過', offset);
 
   //沒資料就404
   if (data.length === 0) {
