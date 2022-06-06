@@ -78,6 +78,8 @@ app.get('/stocks', async (request, response, next) => {
 //stocks 個別
 //放入page
 app.get('/stocks/:stockId', async (request, response, next) => {
+  // 取得網址上的參數 req.params   req.params.stockId
+  console.log('get stocks by id',request.params)
   let [data, fields] = await pool.execute(
     'SELECT * FROM stock_prices WHERE stock_id = ?',
     [request.params.stockId]
