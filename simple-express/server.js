@@ -44,7 +44,7 @@ const path = require('path');
 
 //一般中間件
 app.use((request, respond, next) => {
-  console.log('中間件');
+  // console.log('中間件');
   next();
 });
 
@@ -79,7 +79,7 @@ app.get('/stocks', async (request, response, next) => {
 //放入page
 app.get('/stocks/:stockId', async (request, response, next) => {
   // 取得網址上的參數 req.params   req.params.stockId
-  console.log('get stocks by id',request.params)
+  // console.log('get stocks by id',request.params)
   let [data, fields] = await pool.execute(
     'SELECT * FROM stock_prices WHERE stock_id = ?',
     [request.params.stockId]
@@ -110,7 +110,7 @@ app.get('/stocks/:stockId', async (request, response, next) => {
 
   //TODO:5.取得該頁的資料
   let [pageResults] = await pool.execute(
-    'SELECT * FROM stock_prices WHERE stock_id = ? LIMIT ? OFFSET ?',
+    'SELECT * FROM stock_prices WHERE stock_id = ? ORDER BY date DESC LIMIT ? OFFSET ?',
     [request.params.stockId, perPage, offset]
   );
   //TODO:6.回給前端
