@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom'; //網址hook
+import { API_URL } from '../utils/config';
 
 // 1. 在 react，我們不處理 dom 物件
 // 2. 相反地，我們在 react 裡控制的是「狀態」
@@ -14,13 +16,16 @@ const StockDetails = () => {
   // 總筆數 1,2,3,4,5,6,...,12
   const [lastPage, setLastPage] = useState(1);
 
+    // 從網址上把 :stockId 拿下來
+    const { stockId } = useParams();
+
   //data = ['a','b','c'] <-- 不行直接改！！！
   // 當 useEffect 的第二個參數是空陣列的時候
   // 表示這是元件載入時的「副作用」
   useEffect(() => {
     let getPrices = async () => {
       // http://localhost:3001/stocks/2330?page=1
-      let response = await axios.get('http://localhost:3001/stocks/2330', {
+      let response = await axios.get(`${API_URL}/stocks/${stockId}`, {
         params: {
           page: page,
         },
