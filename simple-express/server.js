@@ -6,20 +6,10 @@ const app = express();
 const cors = require('cors');
 app.use(cors());
 
-const mysql = require('mysql2');
 require('dotenv').config();
 
-let pool = mysql
-  .createPool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    //為了pool 新增參數 設定上限10條連線
-    connectionLimit: 10,
-  })
-  .promise();
+//TODO: 6/11連線改成模組
+const pool = require('./utils/db');
 
 //HTTP reguest(client--->請求--->server)
 //method:get,post,put,delete..
@@ -41,6 +31,10 @@ const path = require('path');
 // 方法2: 指定網址 aaa 用於分類用
 //app.use('/aaa', express.static(path.join(__dirname, 'public')));
 // http://localhost:3001/aaa/images/callback-hell.png
+
+//TODO: 6/11 express內建中間件 - - >一定要有
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 //一般中間件
 app.use((request, respond, next) => {
@@ -68,71 +62,14 @@ app.get('/error', (request, response, next) => {
   // --> 都會跳去錯誤處理中間件
 });
 
-// RESTful API
-// 取得 stocks 的列表
-app.get('/stocks', async (request, response, next) => {
-  let [data, fields] = await pool.execute('SELECT * FROM stocks');
-  response.json(data);
-});
+//TODO: 6/11模組 stock stock
+//api前面網址+api 回傳就是json
+const StockRouters = require('./routers/StockRouters');
+app.use('/api/stocks', StockRouters);
 
-//stocks 個別
-//放入page
-app.get('/stocks/:stockId', async (request, response, next) => {
-  // 取得網址上的參數 req.params   req.params.stockId
-  // console.log('get stocks by id',request.params)
-  let [data, fields] = await pool.execute(
-    'SELECT * FROM stock_prices WHERE stock_id = ?',
-    [request.params.stockId]
-  );
-
-  // console.log('query stock by id:', data);
-  //TODO:1.取得目前在第幾頁 req.query.page，而且利用 || 這個特性來做預設值
-  let page = request.query.page || 1;
-  console.log('拿到的頁數', page);
-
-  //TODO:2.取得目前的總筆數
-  let [allResult] = await pool.execute(
-    'SELECT * FROM stock_prices WHERE stock_id = ?',
-    [request.params.stockId]
-  );
-  const total = allResult.length;
-  console.log('總數量', total);
-
-  //TODO:3.計算總共有幾頁
-  //使用Math.Ceil
-  const perPage = 5; //每頁5筆
-  const lastPage = Math.ceil(total / perPage);
-  console.log('總頁數', lastPage);
-
-  //TODO:4.計算 offset 是多少（計算要跳過幾筆）
-  let offset = (page - 1) * perPage;
-  console.log('需跳過', offset);
-
-  //TODO:5.取得該頁的資料
-  let [pageResults] = await pool.execute(
-    'SELECT * FROM stock_prices WHERE stock_id = ? ORDER BY date DESC LIMIT ? OFFSET ?',
-    [request.params.stockId, perPage, offset]
-  );
-  //TODO:6.回給前端
-
-  //沒資料就404
-  if (data.length === 0) {
-    response.status(404).json('沒資料');
-  } else {
-    response.json({
-      // 用來儲存所有跟頁碼有關的資訊
-      pagination: {
-        total,
-        lastPage,
-        page,
-      },
-      // 真正的資料
-      data: pageResults,
-    });
-    // response.json(data);
-  }
-});
-
+//引用註冊的後台
+const AuthRouter = require('./routers/AuthRouter');
+app.use('/api/auth', AuthRouter);
 //這個一般中間件在所有路由的後面
 //會到這裡 表示前面所有路由中間件都沒有比到符合的網址
 //404
