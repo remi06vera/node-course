@@ -21,7 +21,6 @@ const Register = () => {
     setMember({ ...member, [e.target.name]: e.target.value });
   }
 
-  //圖片的函式
   function handlePhoto(e) {
     setMember({ ...member, photo: e.target.files[0] });
   }
@@ -109,11 +108,12 @@ const Register = () => {
         <label htmlFor="photo" className="flex mb-2 w-32">
           圖片
         </label>
-        <input className="w-full border-2 border-purple-200 rounded-md h-10 focus:outline-none focus:border-purple-400 px-2" 
-        type="file" 
-        id="photo" 
-        name="photo" 
-        onchange={handlePhoto}
+        <input
+          className="w-full border-2 border-purple-200 rounded-md h-10 focus:outline-none focus:border-purple-400 px-2"
+          type="file"
+          id="photo"
+          name="photo"
+          onChange={handlePhoto}
         />
       </div>
       <button className="text-xl bg-indigo-300 px-4 py-2.5 rounded hover:bg-indigo-400 transition duration-200 ease-in" onClick={handleSubmit}>
