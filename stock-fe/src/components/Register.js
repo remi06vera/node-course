@@ -21,6 +21,11 @@ const Register = () => {
     setMember({ ...member, [e.target.name]: e.target.value });
   }
 
+  //圖片的函式
+  function handlePhoto(e) {
+    setMember({ ...member, photo: e.target.files[0] });
+  }
+
   async function handleSubmit(e) {
     // 停掉預設行為
     e.preventDefault();
@@ -28,7 +33,17 @@ const Register = () => {
       // axios.get(URL, params)
       // axios.post(URL, data, params)
       // 方法1: 當你的表單沒有圖片的時候，可以直接傳輸 json 到後端去
-      let response = await axios.post(`${API_URL}/auth/register`, member);
+      // let response = await axios.post(`${API_URL}/auth/register`, member);
+      // console.log(response.data);
+
+      // 方法2: 如果表單有圖片，會用 FormData 的方式來上傳
+      let formData = new FormData();
+      formData.append('email', member.email);
+      formData.append('name', member.name);
+      formData.append('password', member.password);
+      formData.append('confirmPassword', member.confirmPassword);
+      formData.append('photo', member.photo);
+      let response = axios.post(`${API_URL}/auth/register`, formData);
       console.log(response.data);
     } catch (e) {
       console.error(e);
@@ -94,7 +109,12 @@ const Register = () => {
         <label htmlFor="photo" className="flex mb-2 w-32">
           圖片
         </label>
-        <input className="w-full border-2 border-purple-200 rounded-md h-10 focus:outline-none focus:border-purple-400 px-2" type="file" id="photo" name="photo" />
+        <input className="w-full border-2 border-purple-200 rounded-md h-10 focus:outline-none focus:border-purple-400 px-2" 
+        type="file" 
+        id="photo" 
+        name="photo" 
+        onchange={handlePhoto}
+        />
       </div>
       <button className="text-xl bg-indigo-300 px-4 py-2.5 rounded hover:bg-indigo-400 transition duration-200 ease-in" onClick={handleSubmit}>
         註冊
