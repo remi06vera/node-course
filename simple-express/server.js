@@ -1,18 +1,17 @@
-//TODO:步驟1：導入第三方套件-express
+//步驟1：導入第三方套件-express
 const express = require('express');
-//TODO:步驟2：利用Express 建立一個 express applications
+//步驟2：利用Express 建立一個 express applications
 const app = express();
+
 // 使用第三方開發的中間件 cors
 const cors = require('cors');
 app.use(cors());
 
 require('dotenv').config();
 
-//TODO: 6/11連線改成模組
+//6/11連線改成模組
 const pool = require('./utils/db');
 
-//HTTP reguest(client--->請求--->server)
-//method:get,post,put,delete..
 
 //nodejs內建套件(不需 npm i) 用來處理路徑
 const path = require('path');
@@ -20,19 +19,17 @@ const path = require('path');
 // //express SSR 的做法
 // //設定 express pug視圖檔案放在哪裡
 // app.set('views', path.join(__dirname, 'views'));
-// //設定 express要用哪一種樣版引擎 (template engine)
-// //要用的視圖工具叫pug
-// app.set('view engine', 'pug');
+
 
 // 使用 express 內建的中間件 static- - >處理靜態資料
 // 方法1: 不要指定網址
 //app.use(express.static(path.join(__dirname, 'assets')));
 // http://localhost:3001/images/test1.jpg
 // 方法2: 指定網址 aaa 用於分類用
-//app.use('/aaa', express.static(path.join(__dirname, 'public')));
-// http://localhost:3001/aaa/images/callback-hell.png
+app.use('/public', express.static(path.join(__dirname, 'public')));
+// http://localhost:3001/public/members/1655003608497.jpg
 
-//TODO: 6/11 express內建中間件 - - >一定要有
+//6/11 express內建中間件 - - >一定要有
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -62,7 +59,7 @@ app.get('/error', (request, response, next) => {
   // --> 都會跳去錯誤處理中間件
 });
 
-//TODO: 6/11模組 stock stock
+//6/11模組 stock stock
 //api前面網址+api 回傳就是json
 const StockRouters = require('./routers/StockRouters');
 app.use('/api/stocks', StockRouters);
@@ -70,6 +67,8 @@ app.use('/api/stocks', StockRouters);
 //引用註冊的後台
 const AuthRouter = require('./routers/AuthRouter');
 app.use('/api/auth', AuthRouter);
+
+
 //這個一般中間件在所有路由的後面
 //會到這裡 表示前面所有路由中間件都沒有比到符合的網址
 //404
@@ -86,7 +85,7 @@ app.use((error, request, response, next) => {
   response.status(500).send('請洽系統管理員'); //response物件裡的屬性status-->指定狀況
 });
 
-//TODO:步驟3：告訴伺服器聽取 3001 這個 Port
+//步驟3：告訴伺服器聽取 3001 這個 Port
 app.listen(3001, () => {
   console.log('Server running at port 3001');
 });
